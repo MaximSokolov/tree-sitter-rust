@@ -153,13 +153,13 @@ fn accumulate(self) -> Machine<{State::Accumulate}> {}
     name: (identifier)
     parameters: (parameters
       (attribute_item
-        (meta_item
+        (attr_item
           (identifier)))
       (parameter
         pattern: (identifier)
         type: (primitive_type))
       (attribute_item
-        (meta_item
+        (attr_item
           (identifier)))
       (parameter
         pattern: (identifier)
@@ -397,7 +397,7 @@ struct Inches(i32);
     (field_declaration (visibility_modifier) (field_identifier) (primitive_type))))
   (struct_item (type_identifier) (field_declaration_list
     (field_declaration (field_identifier) (primitive_type))
-    (attribute_item (meta_item (identifier)))
+    (attribute_item (attr_item (identifier)))
     (field_declaration (field_identifier) (primitive_type))))
   (struct_item (type_identifier) (ordered_field_declaration_list
     (visibility_modifier) (primitive_type) (primitive_type) (primitive_type)))
@@ -509,8 +509,8 @@ pub enum Node<T: Item> {
             (type_arguments
               (generic_type (type_identifier) (type_arguments (type_identifier))))))
           (field_declaration (field_identifier) (primitive_type))))
-      (attribute_item (meta_item (identifier)))
-      (attribute_item (meta_item (identifier)))
+      (attribute_item (attr_item (identifier)))
+      (attribute_item (attr_item (identifier)))
       (enum_variant
         (identifier)
         (field_declaration_list
@@ -786,7 +786,7 @@ mod macos_only {}
         path: (identifier)
         name: (identifier))))))
 
-  (attribute_item (meta_item
+  (attribute_item (attr_item
     (scoped_identifier
       path: (identifier)
       name: (identifier))
@@ -811,6 +811,91 @@ mod macos_only {
         arguments: (meta_arguments (meta_item
           (identifier)
           value: (string_literal))))))))
+
+============================================
+Attribute macros
+============================================
+
+foo(#[attr(=> arbitrary tokens <=)] x, y);
+
+foo(#[bar(some tokens are special in other contexts: $/';()*()+.)] x);
+
+---
+
+(source_file
+  (call_expression
+    function: (identifier)
+    arguments: (arguments
+      (attribute_item (attr_item
+        (identifier)
+        arguments: (delim_token_tree (identifier) (identifier))))
+      (identifier)
+      (identifier)))
+  (call_expression
+    function: (identifier)
+    arguments: (arguments
+      (attribute_item (attr_item
+        (identifier)
+        arguments: (delim_token_tree
+          (identifier)
+          (identifier)
+          (identifier)
+          (identifier)
+          (identifier)
+          (identifier)
+          (identifier)
+          (delim_token_tree)
+          (delim_token_tree))))
+      (identifier))))
+
+============================================
+Derive macro helper attributes
+============================================
+
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+pub enum Error {
+    #[error("first letter must be lowercase but was {:?}", first_char(.0))]
+    WrongCase(String),
+    #[error("invalid index {idx}, expected at least {} and at most {}", .limits.lo, .limits.hi)]
+    OutOfBounds { idx: usize, limits: Limits },
+}
+
+---
+
+(source_file
+  (use_declaration
+    (scoped_identifier (identifier) (identifier)))
+  (attribute_item
+    (meta_item (identifier)
+      (meta_arguments
+        (meta_item (identifier))
+        (meta_item (identifier)))))
+  (enum_item
+    (visibility_modifier)
+    (type_identifier)
+    (enum_variant_list
+      (attribute_item (attr_item
+        (identifier)
+        (delim_token_tree
+          (string_literal)
+          (identifier)
+          (delim_token_tree (integer_literal)))))
+      (enum_variant (identifier)
+        (ordered_field_declaration_list (type_identifier)))
+      (attribute_item (attr_item
+        (identifier)
+        (delim_token_tree
+          (string_literal)
+          (identifier)
+          (identifier)
+          (identifier)
+          (identifier))))
+      (enum_variant (identifier)
+        (field_declaration_list
+          (field_declaration (field_identifier) (primitive_type))
+          (field_declaration (field_identifier) (type_identifier)))))))
 
 ============================================
 Attributes and Expressions
@@ -844,14 +929,14 @@ fn foo() {
       (let_declaration
         pattern: (identifier)
         value: (array_expression
-          (attribute_item (meta_item (identifier)))
+          (attribute_item (attr_item (identifier)))
           (integer_literal)
           (integer_literal)
           (integer_literal)))
       (let_declaration
         pattern: (identifier)
         value: (tuple_expression
-          (attribute_item (meta_item (identifier)))
+          (attribute_item (attr_item (identifier)))
           (integer_literal)
           (integer_literal)
           (integer_literal))))))

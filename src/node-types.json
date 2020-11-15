@@ -618,6 +618,62 @@
     }
   },
   {
+    "type": "attr_item",
+    "named": true,
+    "fields": {
+      "arguments": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "delim_token_tree",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "_literal",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "crate",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "metavariable",
+          "named": true
+        },
+        {
+          "type": "scoped_identifier",
+          "named": true
+        },
+        {
+          "type": "self",
+          "named": true
+        },
+        {
+          "type": "super",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "attribute_item",
     "named": true,
     "fields": {},
@@ -625,6 +681,10 @@
       "multiple": false,
       "required": true,
       "types": [
+        {
+          "type": "attr_item",
+          "named": true
+        },
         {
           "type": "meta_item",
           "named": true
@@ -1142,6 +1202,53 @@
       "types": [
         {
           "type": "_declaration_statement",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "delim_token_tree",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "_literal",
+          "named": true
+        },
+        {
+          "type": "crate",
+          "named": true
+        },
+        {
+          "type": "delim_token_tree",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "metavariable",
+          "named": true
+        },
+        {
+          "type": "mutable_specifier",
+          "named": true
+        },
+        {
+          "type": "primitive_type",
+          "named": true
+        },
+        {
+          "type": "self",
+          "named": true
+        },
+        {
+          "type": "super",
           "named": true
         }
       ]
@@ -2170,6 +2277,10 @@
       "multiple": false,
       "required": true,
       "types": [
+        {
+          "type": "attr_item",
+          "named": true
+        },
         {
           "type": "meta_item",
           "named": true
