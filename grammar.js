@@ -38,7 +38,7 @@ const primitive_types = numeric_types.concat(['bool', 'str', 'char'])
 module.exports = grammar({
   name: 'rust',
 
-  extras: $ => [/\s/, $.line_comment, $.block_comment],
+  extras: $ => [/\s/, $.line_comment, $.block_comment, $.doc_comment],
 
   externals: $ => [
     $._string_content,
@@ -1410,13 +1410,12 @@ module.exports = grammar({
 
     boolean_literal: $ => choice('true', 'false'),
 
-    comment: $ => choice(
-      $.line_comment,
-      $.block_comment
-    ),
+    doc_comment: $ => token(seq(
+      '///', /.*/
+    )),
 
     line_comment: $ => token(seq(
-      '//', /.*/
+      new RegExp('\/\/[^\/]'), /.*/
     )),
 
     _path: $ => choice(

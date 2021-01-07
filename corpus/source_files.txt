@@ -55,6 +55,25 @@ Line comments
 (source_file
   (line_comment))
 
+============================================
+Doc comments
+============================================
+
+/// Foo
+///
+/// # Description
+///
+/// * Bar
+
+----
+
+(source_file
+  (doc_comment)
+  (doc_comment)
+  (doc_comment)
+  (doc_comment)
+  (doc_comment)) 
+
 =====================================
 Greek letters in identifiers
 =====================================
