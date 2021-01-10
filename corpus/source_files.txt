@@ -59,20 +59,17 @@ Line comments
 Doc comments
 ============================================
 
-/// Foo
-///
-/// # Description
-///
-/// * Bar
+/// Multi
+/// Line
+/// Doc
+/// Comment
+// Line comment
 
 ----
 
 (source_file
   (doc_comment)
-  (doc_comment)
-  (doc_comment)
-  (doc_comment)
-  (doc_comment)) 
+  (line_comment)) 
 
 =====================================
 Greek letters in identifiers

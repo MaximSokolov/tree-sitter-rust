@@ -45,6 +45,8 @@ module.exports = grammar({
     $.raw_string_literal,
     $.float_literal,
     $.block_comment,
+    $.line_comment,
+    $.doc_comment
   ],
 
   supertypes: $ => [
@@ -1409,14 +1411,6 @@ module.exports = grammar({
       )),
 
     boolean_literal: $ => choice('true', 'false'),
-
-    doc_comment: $ => token(seq(
-      '///', /.*/
-    )),
-
-    line_comment: $ => token(seq(
-      new RegExp('\/\/[^\/]'), /.*/
-    )),
 
     _path: $ => choice(
       $.self,
