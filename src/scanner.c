@@ -6,6 +6,8 @@ enum TokenType {
   RAW_STRING_LITERAL,
   FLOAT_LITERAL,
   BLOCK_COMMENT,
+  LINE_COMMENT,
+  DOC_COMMENT,
 };
 
 void *tree_sitter_rust_external_scanner_create() { return NULL; }
@@ -143,7 +145,49 @@ bool tree_sitter_rust_external_scanner_scan(void *payload, TSLexer *lexer,
 
   if (lexer->lookahead == '/') {
     advance(lexer);
+
+    if ((valid_symbols[LINE_COMMENT] || valid_symbols[DOC_COMMENT]) && lexer->lookahead == '/') {
+      advance(lexer);
+      if (lexer->lookahead == '/') {
+        lexer->result_symbol = DOC_COMMENT;
+        while (true) {
+          while (lexer->lookahead != '\n') {
+            advance(lexer);
+          }
+          if (lexer->lookahead == 0) {
+            break;
+          }
+
+          lexer->mark_end(lexer);
+          advance(lexer);
+          if (lexer->lookahead == '/') {
+            advance(lexer);
+            if (lexer->lookahead == '/') {
+              advance(lexer);
+              if (lexer->lookahead == '/') {
+                advance(lexer);
+              } else {
+                break;
+              }
+            } else {
+              break;
+            }
+          } else {
+            break;
+          }
+        }
+      } else {
+        lexer->result_symbol = LINE_COMMENT;
+        while (lexer->lookahead != '\n' && lexer->lookahead != 0) {
+          advance(lexer);
+        }
+      }
+
+      return true;
+    }
+
     if (lexer->lookahead != '*') return false;
+
     advance(lexer);
 
     bool after_star = false;
