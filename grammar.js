@@ -54,6 +54,7 @@ module.exports = grammar({
     $._literal_pattern,
     $._declaration_statement,
     $._pattern,
+    $._else_clause,
   ],
 
   inline: $ => [
@@ -1069,7 +1070,7 @@ module.exports = grammar({
       'if',
       field('condition', $._expression),
       field('consequence', $.block),
-      optional(field("alternative", $.else_clause))
+      repeat($._else_clause),
     ),
 
     if_let_expression: $ => seq(
@@ -1079,16 +1080,35 @@ module.exports = grammar({
       '=',
       field('value', $._expression),
       field('consequence', $.block),
-      optional(field('alternative', $.else_clause))
+      repeat($._else_clause),
+    ),
+
+    _else_clause: $ => choice(
+      $.else_if_clause,
+      $.else_if_let_clause,
+      $.else_clause,
+    ),
+
+    else_if_clause: $ => seq(
+      'else',
+      'if',
+      field('condition', $._expression),
+      field('consequence', $.block),
+    ),
+
+    else_if_let_clause: $ => seq(
+      'else',
+      'if',
+      'let',
+      field('pattern', $._pattern),
+      '=',
+      field('value', $._expression),
+      field('consequence', $.block),
     ),
 
     else_clause: $ => seq(
       'else',
-      choice(
-        $.block,
-        $.if_expression,
-        $.if_let_expression
-      )
+      $.block,
     ),
 
     match_expression: $ => seq(

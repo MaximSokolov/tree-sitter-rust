@@ -332,7 +332,10 @@ If expressions
 ============================================
 
 fn main() {
+  if n == 2 {
+  }
   if n == 1 {
+  } else if let Some(k) = z {
   } else if n == 2 {
   } else {
   }
@@ -348,28 +351,60 @@ let y = if x == 5 { 10 } else { 15 };
     parameters: (parameters)
     body: (block
       (if_expression
-        condition: (binary_expression
-          left: (identifier)
-          right: (integer_literal))
+       condition: (binary_expression left: (identifier) right: (integer_literal))
+       consequence: (block))
+      (if_expression
+        condition: (binary_expression left: (identifier) right: (integer_literal))
         consequence: (block)
-        alternative: (else_clause
-          (if_expression
-            condition: (binary_expression
-              left: (identifier)
-              right: (integer_literal))
-            consequence: (block)
-            alternative: (else_clause (block)))))))
+        (else_if_let_clause
+          pattern: (tuple_struct_pattern type: (identifier) (identifier))
+          value: (identifier)
+          consequence: (block))
+        (else_if_clause
+          condition: (binary_expression left: (identifier) right: (integer_literal))
+          consequence: (block))
+        (else_clause (block)))))
   (let_declaration
     pattern: (identifier)
     value: (if_expression
-      condition: (binary_expression
-        left: (identifier)
-        right: (integer_literal))
+      condition: (binary_expression left: (identifier) right: (integer_literal))
       consequence: (block (integer_literal))
-      alternative: (else_clause (block (integer_literal))))))
+      (else_clause (block (integer_literal))))))
 
 ============================================
-If let expressions
+If let as an expression
+============================================
+
+let x = if let Some(a) = dish {
+  a
+} else if let None = dish {
+  99
+} else if n == 8 {
+  9
+} else {
+  7
+};
+
+---
+
+(source_file
+ (let_declaration
+  pattern: (identifier)
+  value: (if_let_expression
+    pattern: (tuple_struct_pattern type: (identifier) (identifier))
+    value: (identifier)
+    consequence: (block (identifier))
+    (else_if_let_clause
+      pattern: (identifier)
+      value: (identifier)
+      consequence: (block (integer_literal)))
+    (else_if_clause 
+      condition: (binary_expression left: (identifier) right: (integer_literal))
+      consequence: (block (integer_literal)))
+    (else_clause (block (integer_literal))))))
+
+============================================
+If let control flow
 ============================================
 
 if let ("Bacon", b) = dish {
@@ -798,7 +833,7 @@ let three_ranges = [const { (0..=5).into_inner() }; 3];
                 field: (field_identifier))
               arguments: (arguments
                 (integer_literal)))))))
-    alternative: (else_clause
+    (else_clause
       (block
         (identifier))))
   (let_declaration
